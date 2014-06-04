@@ -11,7 +11,7 @@ from journal import get_database_connection
 from journal import init_db
 
 
-TEST_DSN = 'dbname=test_learning_journal '
+TEST_DSN = 'dbname=test_learning_journal'
 
 
 def clear_db():
@@ -57,7 +57,24 @@ def test_write_entry(req_context):
     assert len(rows) == 1
     for vals in expected:
         assert vals in rows[0]
-    
+
+def test_get_all_entries_empty(req_context):
+    from journal import get_all_entries
+    entries = get_all_entries()
+    assert len(entries) == 0
+
+
+def test_get_all_entries(req_context):
+    from journal import get_all_entries, write_entry
+    expected = ("My Title", "My Text")
+    write_entry(*expected)
+    entries = get_all_entries()
+    assert len(entries) == 1
+    for entry in entries:
+        assert expected[0] == entry['title']
+        assert expected[1] == entry['text']
+        assert 'created' in entry
+
 
 
 
