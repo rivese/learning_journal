@@ -11,6 +11,8 @@ from flask import render_template
 
 
 
+
+
 DB_SCHEMA = """
 DROP TABLE IF EXISTS entries;
 CREATE TABLE entries (
