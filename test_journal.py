@@ -11,7 +11,7 @@ from journal import get_database_connection
 from journal import init_db
 
 
-TEST_DSN = 'dbname=test_learning_journal user=elizabethrives'
+TEST_DSN = 'dbname=test_learning_journal'
 
 
 def clear_db():
