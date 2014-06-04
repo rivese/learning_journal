@@ -6,6 +6,7 @@ import os
 import psycopg2
 from contextlib import closing
 from flask import g
+import datetime
 
 
 DB_SCHEMA = """
@@ -18,14 +19,28 @@ CREATE TABLE entries (
 )
 """
 
+DB_ENTRY_INSERT = """
+INSERT INTO entries (title, text, created) VALUES (%s, %s, %s)
+"""
+
+
+
 app = Flask(__name__)
+
+def write_entry(title, text):
+    if not title or not text:
+        raise ValueError("Title and text required for writing an entry")
+    con = get_database_connection()
+    cur = con.cursor()
+    now = datetime.datetime.utcnow()
+    cur.execute(DB_ENTRY_INSERT, [title, text, now])
 
 @app.route('/')
 def hello():
     return u'Hello world!'
 
 app.config['DATABASE'] = os.environ.get(
-    'DATABASE_URL', 'dbname=learning_journal user=elizabethrives'
+    'DATABASE_URL', 'dbname=learning_journal'
 )
 
 def connect_db():
