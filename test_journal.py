@@ -43,6 +43,22 @@ def req_context(db):
         con = get_database_connection()
         con.rollback()
 
+def run_independent_query(query, params=[]):
+    con = get_database_connection()
+    cur = con.cursor()
+    cur.execute(query, params)
+    return cur.fetchall()
+
+def test_write_entry(req_context):
+    from journal import write_entry
+    expected = ("My Title", "My Text")
+    write_entry(*expected)
+    rows = run_independent_query("SELECT * FROM entries")
+    assert len(rows) == 1
+    for vals in expected:
+        assert vals in rows[0]
+    
+
 
 
 
