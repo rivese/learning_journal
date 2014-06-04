@@ -25,7 +25,7 @@ def hello():
     return u'Hello world!'
 
 app.config['DATABASE'] = os.environ.get(
-    'DATABASE_URL', 'dbname=learning_journal user=elizabethrives'
+    'DATABASE_URL', 'dbname=learning_journal '
 )
 
 def connect_db():
