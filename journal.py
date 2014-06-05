@@ -71,6 +71,26 @@ def add_entry():
         abort(500)
     return redirect(url_for('show_entries'))
 
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    error = None
+    if request.method == 'POST':
+        try:
+            do_login(request.form['username'].encode('utf-8'),
+                     request.form['password'].encode('utf-8'))
+        except ValueError:
+            error = "Login Failed"
+        else:
+            return redirect(url_for('show_entries'))
+    return render_template('login.html', error=error)
+
+@app.route('/logout')
+def logout():
+    session.pop('logged_in', None)
+    return redirect(url_for('show_entries'))
+
+
 app.config['DATABASE'] = os.environ.get(
     'DATABASE_URL', 'dbname=learning_journal'
 )
