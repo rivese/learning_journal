@@ -12,6 +12,8 @@ from flask import abort
 from flask import request
 from flask import url_for
 from flask import redirect
+from flask import session
+from passlib.hash import pbkdf2_sha256
 
 
 
@@ -72,6 +74,17 @@ def add_entry():
 app.config['DATABASE'] = os.environ.get(
     'DATABASE_URL', 'dbname=learning_journal'
 )
+app.config['ADMIN_USERNAME'] = os.environ.get(
+    'ADMIN_USERNAME', 'admin'
+)
+
+app.config['ADMIN_PASSWORD'] = os.environ.get(
+    'ADMIN_PASSWORD', pbkdf2_sha256.encrypt('admin')
+)
+
+app.config['SECRET_KEY'] = os.environ.get(
+    'FLASK_SECRET_KEY', 'sooperseekritvaluenooneshouldknow'
+)
 
 def connect_db():
     """Return a connection to the configured database"""
@@ -101,6 +114,13 @@ def teardown_request(exception):
         else:
             db.commit()
         db.close()
+
+def do_login(username='', passwd=''):
+    if username != app.config['ADMIN_USERNAME']:
+        raise ValueError
+    if not pbkdf2_sha256.verify(passwd, app.config['ADMIN_PASSWORD']):
+        raise ValueError
+    session['logged_in'] = True
 
 
 if __name__ == '__main__':
